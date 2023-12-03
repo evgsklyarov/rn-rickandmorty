@@ -7,11 +7,13 @@ import Screen from 'src/components/Screen';
 import AuthContainer from 'src/screens/auth/components/AuthContainer';
 import {AuthStackNavigationProp} from 'src/navigation/AuthStack';
 import {loginValidationSchema} from 'src/validation/schemas';
+import {login} from 'src/utils/fakeAuthApi';
+import useAuth from 'src/hooks/useAuth';
 
 const SignIn: FC = () => {
   const navigation = useNavigation<AuthStackNavigationProp<'SignIn'>>();
-
-  const {control, handleSubmit} = useForm({
+  const {login: signIn} = useAuth();
+  const {control, handleSubmit, setError} = useForm({
     defaultValues: {
       email: '',
       password: '',
@@ -21,10 +23,18 @@ const SignIn: FC = () => {
 
   const [isSubmitLoading, setSubmitLoading] = useState(false);
 
-  const onSignInPress = handleSubmit(async payload => {
+  const onSubmit = handleSubmit(async payload => {
     try {
       setSubmitLoading(true);
+
+      await login(payload.email, payload.password);
+
+      await signIn({
+        email: payload.email,
+        password: payload.password,
+      });
     } catch (error) {
+      setError('password', {message: error.message});
     } finally {
       setSubmitLoading(false);
     }
@@ -39,7 +49,7 @@ const SignIn: FC = () => {
       <AuthContainer
         isSubmitLoading={isSubmitLoading}
         type="signIn"
-        onSubmitPress={onSignInPress}
+        onSubmitPress={onSubmit}
         onSwitchActionPress={onSignUpPress}>
         <Controller
           name="email"
@@ -52,6 +62,7 @@ const SignIn: FC = () => {
               value={value}
               errorMsg={error?.message}
               onChange={onChange}
+              disabled={isSubmitLoading}
             />
           )}
         />
@@ -59,7 +70,7 @@ const SignIn: FC = () => {
         <Controller
           name="password"
           control={control}
-          render={({field: {value, onChange, onBlur}, fieldState: {error}}) => (
+          render={({field: {value, onChange}, fieldState: {error}}) => (
             <Input
               isSecure
               label="Password"
@@ -67,6 +78,7 @@ const SignIn: FC = () => {
               value={value}
               errorMsg={error?.message}
               onChange={onChange}
+              disabled={isSubmitLoading}
             />
           )}
         />

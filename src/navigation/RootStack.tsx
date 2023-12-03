@@ -1,27 +1,30 @@
 import React, {FC} from 'react';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
 
 import Characters from 'src/screens/characters';
+import Profile from 'src/screens/profile';
 
-export type RootStackParamList = {
+export type RootTabParamList = {
   Characters: undefined;
+  Profile: undefined;
 };
 
-export type RootNavigationProp<T extends keyof RootStackParamList> =
-  NavigationProp<RootStackParamList, T>;
+export type RootNavigationProp<T extends keyof RootTabParamList> =
+  NavigationProp<RootTabParamList, T>;
 
-export type RootRouteProp<T extends keyof RootStackParamList> = RouteProp<
-  RootStackParamList,
+export type RootRouteProp<T extends keyof RootTabParamList> = RouteProp<
+  RootTabParamList,
   T
 >;
 
 const RootStack: FC = () => {
-  const {Navigator, Screen} = createStackNavigator();
+  const {Navigator, Screen} = createBottomTabNavigator();
 
   return (
     <Navigator screenOptions={{headerShown: false}}>
       <Screen name="Characters" component={Characters} />
+      <Screen name="Profile" component={Profile} />
     </Navigator>
   );
 };

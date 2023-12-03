@@ -1,4 +1,4 @@
-import React, {FC, PropsWithChildren, useMemo} from 'react';
+import React, {FC, PropsWithChildren} from 'react';
 
 import {ScrollView, View} from 'react-native';
 
@@ -13,7 +13,6 @@ import styles from './AuthContainer.styles';
 
 type Props = {
   isSubmitLoading?: boolean;
-  isPasswordRulesVisible?: boolean;
   type: AuthContainerType;
   onSubmitPress: () => void;
   onSwitchActionPress: () => void;
@@ -21,7 +20,6 @@ type Props = {
 
 const AuthContainer: FC<PropsWithChildren<Props>> = ({
   isSubmitLoading,
-  isPasswordRulesVisible = false,
   type,
   children,
   onSubmitPress,
@@ -37,20 +35,16 @@ const AuthContainer: FC<PropsWithChildren<Props>> = ({
     swtichActionText,
   } = useAuthContainer(type);
 
-  const isContentScrollable = useMemo(() => {
-    return isKeyboardOpened || isPasswordRulesVisible;
-  }, [isKeyboardOpened, isPasswordRulesVisible]);
-
   return (
     <View style={styles.container}>
       <ScrollView
         showsVerticalScrollIndicator
-        bounces={isContentScrollable}
+        bounces={isKeyboardOpened}
         keyboardShouldPersistTaps="handled"
         style={styles.scrollContainer}
         contentContainerStyle={[
           styles.scrollContent,
-          isContentScrollable && styles.scrollContentScrollable,
+          isKeyboardOpened && styles.scrollContentScrollable,
         ]}>
         <View style={styles.form}>
           <Text text={titleText} type="header" style={styles.title} />

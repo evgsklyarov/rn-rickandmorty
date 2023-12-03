@@ -3,7 +3,7 @@ import colors from 'src/theme/colors';
 
 const styles = StyleSheet.create({
   button: {
-    height: 40,
+    height: 48,
     width: '100%',
 
     flexDirection: 'row',

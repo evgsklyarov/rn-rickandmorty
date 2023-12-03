@@ -11,11 +11,14 @@ import Screen from 'src/components/Screen';
 import Input from 'src/components/Forms/Input';
 
 import AuthContainer from '../components/AuthContainer';
+import {register} from 'src/utils/fakeAuthApi';
+import useAuth from 'src/hooks/useAuth';
 
 const SignUp: FC = () => {
   const navigation = useNavigation<AuthStackNavigationProp<'SignUp'>>();
+  const {login} = useAuth();
 
-  const {control, watch, handleSubmit} = useForm({
+  const {control, handleSubmit, setError} = useForm({
     defaultValues: {
       email: '',
       password: '',
@@ -29,7 +32,15 @@ const SignUp: FC = () => {
   const onSignUpPress = handleSubmit(async payload => {
     try {
       setSubmitLoading(true);
+
+      await register(payload);
+
+      await login({
+        email: payload.email,
+        password: payload.password,
+      });
     } catch (error) {
+      setError('confirmPassword', {message: error.message});
     } finally {
       setSubmitLoading(false);
     }
@@ -43,7 +54,6 @@ const SignUp: FC = () => {
     <Screen withSafeAreaBottomPadding={false} withHorizontalPadding={false}>
       <AuthContainer
         isSubmitLoading={isSubmitLoading}
-        isPasswordRulesVisible={Boolean(watch().password)}
         type="signUp"
         onSubmitPress={onSignUpPress}
         onSwitchActionPress={onSignInPress}>
@@ -58,6 +68,7 @@ const SignUp: FC = () => {
               value={value}
               errorMsg={error?.message}
               onChange={onChange}
+              disabled={isSubmitLoading}
             />
           )}
         />
@@ -73,14 +84,10 @@ const SignUp: FC = () => {
               value={value}
               errorMsg={error?.message}
               onChange={onChange}
+              disabled={isSubmitLoading}
             />
           )}
         />
-
-        {/* <PasswordValidation
-          password={watch().password}
-          passwordConfirmation={watch().passwordConfirmation}
-        /> */}
 
         <Controller
           name="confirmPassword"
@@ -93,6 +100,7 @@ const SignUp: FC = () => {
               value={value}
               errorMsg={error?.message}
               onChange={onChange}
+              disabled={isSubmitLoading}
             />
           )}
         />

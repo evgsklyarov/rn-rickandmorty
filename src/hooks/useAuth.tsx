@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {
   createContext,
   ReactNode,
@@ -11,10 +12,11 @@ import {User} from 'src/types/user';
 type AuthContextType = {
   user: User | null;
   loadingInitial: boolean;
-  signIn: (email: string, password: string) => void;
-  signUp: (email: string, password: string) => void;
+  login: (user: User) => void;
   logout: () => void;
 };
+
+const USER_KEY = 'user';
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
@@ -24,37 +26,38 @@ export const AuthProvider = ({
   children: ReactNode;
 }): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
   const [loadingInitial, setLoadingInitial] = useState<boolean>(true);
 
   useEffect(() => {
-    setLoadingInitial(false);
+    (async () => {
+      try {
+        const _user = await AsyncStorage.getItem(USER_KEY);
+        setUser(_user ? JSON.parse(_user) : null);
+      } catch (error) {
+        throw error;
+      } finally {
+        setLoadingInitial(false);
+      }
+    })();
   }, []);
 
-  const signIn = (email: string, password: string) => {
+  const setUserData = async (_user: User) => {
     try {
-      setLoading(true);
+      setUser(_user);
+
+      await AsyncStorage.setItem(USER_KEY, JSON.stringify(_user));
     } catch (error) {
-    } finally {
-      setLoading(false);
+      throw error;
     }
   };
 
-  const signUp = (email: string, password: string) => {
+  const logout = async () => {
     try {
-      setLoading(true);
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
-  };
+      setUser(null);
 
-  const logout = () => {
-    try {
-      setLoading(true);
+      await AsyncStorage.removeItem(USER_KEY);
     } catch (error) {
-    } finally {
-      setLoading(false);
+      throw error;
     }
   };
 
@@ -62,8 +65,7 @@ export const AuthProvider = ({
     () => ({
       user,
       loadingInitial,
-      signIn,
-      signUp,
+      login: setUserData,
       logout,
     }),
     [user, loadingInitial],
