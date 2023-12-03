@@ -10,10 +10,7 @@ import {AuthStackNavigationProp} from 'src/navigation/AuthStack';
 import Screen from 'src/components/Screen';
 import Input from 'src/components/Forms/Input';
 
-// import PasswordValidation from 'src/components/PasswordValidation';
 import AuthContainer from '../components/AuthContainer';
-
-// import useComponentStyles from './SignUp.styles';
 
 const SignUp: FC = () => {
   const navigation = useNavigation<AuthStackNavigationProp<'SignUp'>>();

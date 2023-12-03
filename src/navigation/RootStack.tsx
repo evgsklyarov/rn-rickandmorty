@@ -1,14 +1,11 @@
 import React, {FC} from 'react';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import ScreenView from 'src/components/Screen';
 
-// import Showcase from 'src/screens/root/Showcase';
-// import TabNavigator from './TabNavigator';
+import Characters from 'src/screens/characters';
 
 export type RootStackParamList = {
-  TabNavigator: undefined;
-  Showcase: undefined;
+  Characters: undefined;
 };
 
 export type RootNavigationProp<T extends keyof RootStackParamList> =
@@ -24,9 +21,7 @@ const RootStack: FC = () => {
 
   return (
     <Navigator screenOptions={{headerShown: false}}>
-      {/* <Screen name="TabNavigator" component={TabNavigator} /> */}
-
-      <Screen name="Showcase" component={ScreenView} />
+      <Screen name="Characters" component={Characters} />
     </Navigator>
   );
 };

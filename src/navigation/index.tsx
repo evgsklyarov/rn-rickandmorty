@@ -17,7 +17,7 @@ const Navigation: FC = () => {
   return (
     <NavigationContainer>
       <Navigator screenOptions={{headerShown: false}}>
-        {user ? (
+        {!user ? (
           <Screen name="RootStack" component={RootStack} />
         ) : (
           <Screen name="AuthStack" component={AuthStack} />
