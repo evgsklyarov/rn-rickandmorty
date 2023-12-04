@@ -21,8 +21,6 @@ const Characters: FC = () => {
 
   const handleEndReached = async () => {
     try {
-      console.log('handleEndReached run');
-
       if (loadingMore || !data?.characters.info.next) {
         return;
       }
